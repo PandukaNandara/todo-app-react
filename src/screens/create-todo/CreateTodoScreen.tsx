@@ -5,29 +5,24 @@ import Header from "../../components/headers/Header";
 import { TaskCard } from "../../components/task/TaskCard";
 import TextField from "../../components/textfield/TextField";
 import TaskModel from "../../models/TaskModel";
+import { useAppDispatch } from "../../reducer/store";
+import { addNewTask } from "../../reducer/TaskSlice";
 
 const CreateTodoScreen = () => {
   const [createTaskTextFieldValue, setCreateTaskTextFieldValue] = useState("");
-
-  const [taskList, setTaskList] = useState<TaskModel[]>([]);
-
+  const dispatcher = useAppDispatch();
   const onCreate = () => {
-    const newTask: TaskModel = {
-      content: createTaskTextFieldValue,
-      date: new Date(),
-      done: false,
-    };
-    setTaskList([newTask, ...taskList]);
+    dispatcher(
+      addNewTask({
+        content: createTaskTextFieldValue,
+        date: new Date(),
+        done: false,
+      })
+    );
   };
-
-  const onComplete = (task: TaskModel) => {
-    const list =taskList.map((t) => task.date === t.date ? {...t, done: true} : t);
-    setTaskList(list);
-  }
 
   return (
     <>
-      <Header />
       <Container>
         <TextField
           type="text"
@@ -38,11 +33,6 @@ const CreateTodoScreen = () => {
           }}
         />
         <ButtonComponent onClick={onCreate}>CREATE</ButtonComponent>
-        <ul className="no-bullets">
-          {taskList.map((task, i) => (
-            <TaskCard onComplete={()=> onComplete(task)} task={task} />
-          ))}
-        </ul>
       </Container>
     </>
   );
